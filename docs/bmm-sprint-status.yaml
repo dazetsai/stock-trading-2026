@@ -1,0 +1,75 @@
+project_name: "2026 股票操作"
+sprint_number: 1
+sprint_goal: "建立穩定的數據抓取流程，並落實 VAO/MTM 核心指標運算與 Telegram 基礎整合"
+sprint_start_date: "2026-02-08"
+sprint_end_date: "2026-02-22"
+last_updated: "2026-02-08T13:18:00+08:00"
+
+epics:
+  - id: "EPIC-01"
+    name: "全自動數據管道"
+    status: "in-progress"
+    stories:
+      - id: "STORY-001"
+        name: "TWSE 盤後價量爬蟲實作"
+        status: "done"
+        estimate: 5
+      - id: "STORY-002"
+        name: "法人買賣超與資券資料對接"
+        status: "done"
+        estimate: 5
+      - id: "STORY-003"
+        name: "券商分點當沖數據深度爬取"
+        status: "not-started"
+        estimate: 8
+      - id: "STORY-004"
+        name: "Google Sheets 資料庫模組封裝"
+        status: "not-started"
+        estimate: 3
+  - id: "EPIC-02"
+    name: "量化指標運算核心"
+    status: "in-progress"
+    stories:
+      - id: "STORY-005"
+        name: "VAO (量價爆發) 指標演算實作"
+        status: "not-started"
+        estimate: 3
+      - id: "STORY-006"
+        name: "MTM 動能與 MA 均線演算實作"
+        status: "not-started"
+        estimate: 2
+      - id: "STORY-007"
+        name: "自動化回測引擎 (勝率/MDD)"
+        status: "not-started"
+        estimate: 8
+  - id: "EPIC-03"
+    name: "信號篩選與風控"
+    status: "not-started"
+    stories:
+      - id: "STORY-008"
+        name: "「🔥強勢關注」選股過濾器"
+        status: "not-started"
+        estimate: 3
+      - id: "STORY-009"
+        name: "基礎風控引擎 (停損/移動停利)"
+        status: "not-started"
+        estimate: 5
+  - id: "EPIC-04"
+    name: "Telegram 自動化"
+    status: "in-progress"
+    stories:
+      - id: "STORY-010"
+        name: "Telegram Bot API 整合與測試"
+        status: "not-started"
+        estimate: 5
+      - id: "STORY-011"
+        name: "每日盤後自動化 Telegram 報表"
+        status: "not-started"
+        estimate: 3
+
+metrics:
+  total_epics: 4
+  total_stories: 11
+  stories_completed: 0
+  stories_in_progress: 0
+  stories_not_started: 11

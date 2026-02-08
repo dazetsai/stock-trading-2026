@@ -1,0 +1,9 @@
+project_name: "2026 股票操作"
+project_type: "api"
+project_level: 2
+framework: "BMAD v6"
+paths:
+  docs: "docs"
+  stories: "docs/stories"
+  config: "bmad"
+  status: "docs/bmm-workflow-status.yaml"
