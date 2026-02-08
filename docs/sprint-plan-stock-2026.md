@@ -30,8 +30,9 @@
 | **STORY-005** | VAO (量價爆發) 指標演算實作 | EPIC-02 | 3      | Must     |
 | **STORY-006** | MTM 動能與 MA 均線演算實作  | EPIC-02 | 2      | Should   |
 | **STORY-010** | Telegram Bot API 整合與測試 | EPIC-04 | 5      | Must     |
+| **STORY-015** | GitHub 平台設置與 AI DevOps 基礎 | EPIC-04 | 3      | Must     | ⭐ NEW |
 
-**Sprint 1 合計：23 Points**
+**Sprint 1 合計：26 Points** (含 STORY-015 AI DevOps 設置)
 
 ---
 
@@ -54,6 +55,28 @@
 
 ---
 
+## Sprint 1 詳細任務說明
+
+### STORY-015: GitHub 平台設置與 AI DevOps 基礎 ⭐ NEW
+**詳細內容:**
+- 建立 GitHub Repository (公開或私有)
+- 設定 Branch Protection (main 分支保護)
+- 啟用 GitHub Actions (基礎 workflow)
+- 設定 Issue Templates (STORY/BUG/FEATURE)
+- 建立 GitHub Project Board (Kanban 看板)
+- 設定 PR Template (含 ZVQ 驗證清單)
+- 配置 GitHub webhook (OpenCode 整合準備)
+
+**驗收標準:**
+- [ ] Repository 可正常推送/拉取
+- [ ] Actions workflow 能執行 (即使空的)
+- [ ] Issue template 可正常建立
+- [ ] Project board 有 Sprint 1 所有 tasks
+
+**參考文件:** [AI DevOps Evaluation](./ai-devops-evaluation.md)
+
+---
+
 ## 待規劃任務 (Backlog)
 
 | ID | Title | Epic | 預估點數 | 優先級 |
@@ -63,6 +86,8 @@
 | **STORY-012** | 分點當沖資料抓取 | EPIC-01 | 5 | Won't (本階段) |
 | **STORY-013** | 風控引擎完整實作 | EPIC-04 | 5 | Should |
 | **STORY-014** | 參數優化與機器學習 | EPIC-02 | 8 | Won't (未來) |
+| **STORY-016** | GitHub Copilot 進階整合 | EPIC-04 | 3 | Could |
+| **STORY-017** | AI 自動化部署 (CD) | EPIC-04 | 5 | Should |
 
 ---
 

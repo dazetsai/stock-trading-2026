@@ -52,6 +52,11 @@
     *   **異常放量下跌**：當日跌幅 > 4% 且成交量大於 5 日均量 1.5 倍。
 - **FR-011**: **倉位管理追蹤**。紀錄每筆交易的成本，自動計算目前庫存的風險敞口 (Exposure)。
 
+### 5. AI DevOps 自動化 (AI DevOps Automation) ⭐ NEW
+- **FR-012**: **Git 平台整合**。系統需整合 GitHub 進行版本控制與協作，支援 AI 輔助開發流程 ([評估報告](./ai-devops-evaluation.md))。
+- **FR-013**: **自動化測試**。CI/CD pipeline 需自動執行單元測試、整合測試、程式碼品質檢查 (ZVQ Standards)。
+- **FR-014**: **AI 程式碼審查**。Pull Request 需觸發 AI 審查 (OpenCode/Gemini)，自動檢查程式碼品質與標準符合性。
+
 ---
 
 ## Non-Functional Requirements (非功能需求)
