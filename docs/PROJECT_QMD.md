@@ -49,12 +49,13 @@ tags: [qmd, memory, index, project]
 | STORY-015 | GitHub 平台設置 | 1 | 🔄 In Progress | Zeda | 1天 | [Eval](./ai-devops-evaluation.md) | Must |
 | STORY-011 | 三維選股引擎 | 2 | ⏳ Backlog | TBD | 5天 | [Screener](./screener-design-stock-2026.md) | Must |
 | STORY-007 | 回測系統 | 2 | ⏳ Backlog | TBD | 3天 | [PRD](./prd-stock-2026.md) | Should |
+| STORY-016 | 庫存股監控清單 | 1 | 🆕 New | Zeda | 1天 | [Watchlist](../data/watchlist_portfolio.json) | Should |
 
 **統計:**
-- Sprint 1 總點數: 26 points
+- Sprint 1 總點數: 27 points (+1)
 - 已完成: 0 points
 - 進行中: 3 points (STORY-015)
-- 待開始: 23 points
+- 待開始: 24 points
 
 ---
 
@@ -94,6 +95,11 @@ tags: [qmd, memory, index, project]
 | indicators | 計算指標 | - | 0 | - | ⏳ 待建立 |
 | screener_signals | 選股訊號 | - | 0 | - | ⏳ 待建立 |
 | screener_performance | 績效追蹤 | - | 0 | - | ⏳ 待建立 |
+
+### 監控清單 (Watchlists)
+| 清單 | 股票數 | 用途 | 檔案位置 | 更新時間 |
+|:-----|:-------|:-----|:---------|:---------|
+| 庫存股監控 | 20 | 用戶現有持股追蹤 | [watchlist_portfolio.json](../data/watchlist_portfolio.json) | 2026-02-09 |
 
 **Schema 定義:** [Architecture §Data Model](./architecture-stock-2026.md)
 

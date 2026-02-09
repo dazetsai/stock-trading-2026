@@ -1,0 +1,208 @@
+{
+  "version": "1.0",
+  "description": "庫存股監控清單 - 自動抓取即時行情與技術指標",
+  "created": "2026-02-09",
+  "source": "用戶庫存股",
+  "total_stocks": 20,
+  "watchlist": [
+    {
+      "code": "2454",
+      "name": "聯發科",
+      "category": "半導體/IC設計",
+      "shares": 70,
+      "current_pnl_pct": 1.08,
+      "priority": "high",
+      "notes": "唯一獲利股，可續抱"
+    },
+    {
+      "code": "2457",
+      "name": "飛宏",
+      "category": "電子零組件",
+      "shares": 1100,
+      "current_pnl_pct": -22.77,
+      "priority": "urgent",
+      "notes": "虧損最深，建議停損評估"
+    },
+    {
+      "code": "2485",
+      "name": "兆赫",
+      "category": "電子零組件",
+      "shares": 2000,
+      "current_pnl_pct": -11.16,
+      "priority": "medium",
+      "notes": "持續觀察"
+    },
+    {
+      "code": "3481",
+      "name": "群創",
+      "category": "電子零組件/面板",
+      "shares": 1500,
+      "current_pnl_pct": -17.51,
+      "priority": "high",
+      "notes": "接近停損線"
+    },
+    {
+      "code": "5340",
+      "name": "建榮",
+      "category": "傳產/化工",
+      "shares": 1000,
+      "current_pnl_pct": -1.10,
+      "priority": "low",
+      "notes": "虧損最小，可續抱"
+    },
+    {
+      "code": "5347",
+      "name": "世界",
+      "category": "半導體",
+      "shares": 200,
+      "current_pnl_pct": -7.71,
+      "priority": "medium",
+      "notes": "部位小，觀察"
+    },
+    {
+      "code": "5425",
+      "name": "台半",
+      "category": "半導體",
+      "shares": 2000,
+      "current_pnl_pct": -10.26,
+      "priority": "medium",
+      "notes": "持續觀察"
+    },
+    {
+      "code": "6127",
+      "name": "九豪",
+      "category": "電子零組件",
+      "shares": 2400,
+      "current_pnl_pct": -7.53,
+      "priority": "medium",
+      "notes": "持續觀察"
+    },
+    {
+      "code": "6182",
+      "name": "合晶",
+      "category": "半導體",
+      "shares": 2100,
+      "current_pnl_pct": -15.69,
+      "priority": "high",
+      "notes": "接近停損線"
+    },
+    {
+      "code": "6282",
+      "name": "康舒",
+      "category": "電子零組件",
+      "shares": 1100,
+      "current_pnl_pct": -11.12,
+      "priority": "medium",
+      "notes": "持續觀察"
+    },
+    {
+      "code": "1303",
+      "name": "南亞",
+      "category": "傳產/化工",
+      "shares": 2700,
+      "current_pnl_pct": -0.44,
+      "priority": "low",
+      "notes": "接近損平"
+    },
+    {
+      "code": "1717",
+      "name": "長興",
+      "category": "傳產/化工",
+      "shares": 1200,
+      "current_pnl_pct": -10.88,
+      "priority": "medium",
+      "notes": "持續觀察"
+    },
+    {
+      "code": "1802",
+      "name": "台玻",
+      "category": "傳產/玻璃",
+      "shares": 3000,
+      "current_pnl_pct": -10.97,
+      "priority": "medium",
+      "notes": "持續觀察"
+    },
+    {
+      "code": "1809",
+      "name": "中釉",
+      "category": "傳產/化工",
+      "shares": 3500,
+      "current_pnl_pct": -16.36,
+      "priority": "high",
+      "notes": "接近停損線"
+    },
+    {
+      "code": "1815",
+      "name": "富喬",
+      "category": "電子零組件",
+      "shares": 1000,
+      "current_pnl_pct": -11.47,
+      "priority": "medium",
+      "notes": "持續觀察"
+    },
+    {
+      "code": "2059",
+      "name": "川湖",
+      "category": "電子零組件/滑軌",
+      "shares": 110,
+      "current_pnl_pct": -15.96,
+      "priority": "urgent",
+      "notes": "最大單筆虧損，部位過重需減碼"
+    },
+    {
+      "code": "2303",
+      "name": "聯電",
+      "category": "半導體/晶圓代工",
+      "shares": 500,
+      "current_pnl_pct": -16.02,
+      "priority": "high",
+      "notes": "接近停損線"
+    },
+    {
+      "code": "2344",
+      "name": "華邦電",
+      "category": "半導體/記憶體",
+      "shares": 2400,
+      "current_pnl_pct": -4.90,
+      "priority": "low",
+      "notes": "跌幅較小，可續抱"
+    },
+    {
+      "code": "2369",
+      "name": "菱生",
+      "category": "半導體/封測",
+      "shares": 3100,
+      "current_pnl_pct": -12.57,
+      "priority": "medium",
+      "notes": "持續觀察"
+    },
+    {
+      "code": "2371",
+      "name": "大同",
+      "category": "電子零組件/綜合",
+      "shares": 3600,
+      "current_pnl_pct": -13.21,
+      "priority": "medium",
+      "notes": "持續觀察"
+    }
+  ],
+  "crawler_config": {
+    "data_sources": [
+      "TWSE即時行情",
+      "技術指標(MA/DMI/OBV/KD)",
+      "法人買賣超",
+      "融資融券",
+      "新聞公告"
+    ],
+    "update_frequency": {
+      "realtime": "交易時段每5分鐘",
+      "daily": "收盤後每日更新",
+      "weekly": "週報表與技術分析"
+    },
+    "alerts": {
+      "price_change": "漲跌幅超過5%通知",
+      "stop_loss": "觸及停損線通知",
+      "volume_spike": "成交量異常放大通知"
+    }
+  }
+}
