@@ -97,9 +97,9 @@ tags: [qmd, memory, index, project]
 | screener_performance | 績效追蹤 | - | 0 | - | ⏳ 待建立 |
 
 ### 監控清單 (Watchlists)
-| 清單 | 股票數 | 用途 | 檔案位置 | 更新時間 |
-|:-----|:-------|:-----|:---------|:---------|
-| 庫存股監控 | 20 | 用戶現有持股追蹤 | [watchlist_portfolio.json](../data/watchlist_portfolio.json) | 2026-02-09 |
+| 清單 | 股票數 | 用途 | 更新頻率 | 檔案位置 | 更新時間 |
+|:-----|:-------|:-----|:---------|:---------|:---------|
+| 庫存股監控 | 20 | 用戶現有持股追蹤 | 每10分鐘 | [watchlist_portfolio.json](../data/watchlist_portfolio.json) | 2026-02-09 |
 
 **Schema 定義:** [Architecture §Data Model](./architecture-stock-2026.md)
 

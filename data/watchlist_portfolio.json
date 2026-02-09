@@ -195,7 +195,7 @@
       "新聞公告"
     ],
     "update_frequency": {
-      "realtime": "交易時段每5分鐘",
+      "realtime": "交易時段每10分鐘",
       "daily": "收盤後每日更新",
       "weekly": "週報表與技術分析"
     },
