@@ -40,22 +40,32 @@ tags: [qmd, memory, index, project]
 
 | ID | 任務 | Sprint | 狀態 | 負責 | 預估 | 文件 | 優先 |
 |:---|:-----|:-------|:-----|:-----|:-----|:-----|:-----|
-| STORY-001 | TWSE 爬蟲實作 | 1 | ⏳ Todo | OpenCode | 3天 | [PRD](./prd-stock-2026.md) | Must |
-| STORY-002 | 法人資料對接 | 1 | ⏳ Todo | OpenCode | 3天 | [PRD](./prd-stock-2026.md) | Must |
-| STORY-004 | SQLite Schema 完善 | 1 | ⏳ Todo | OpenCode | 1天 | [Arch](./architecture-stock-2026.md) | Must |
-| STORY-005 | VAO 指標實作 | 1 | ⏳ Todo | OpenCode | 2天 | [Screener](./screener-design-stock-2026.md) | Must |
-| STORY-006 | MTM + MA 實作 | 1 | ⏳ Todo | OpenCode | 1天 | [Screener](./screener-design-stock-2026.md) | Should |
-| STORY-010 | Telegram Bot 整合 | 1 | ⏳ Todo | OpenCode | 2天 | [PRD](./prd-stock-2026.md) | Must |
-| STORY-015 | GitHub 平台設置 | 1 | 🔄 In Progress | Zeda | 1天 | [Eval](./ai-devops-evaluation.md) | Must |
-| STORY-011 | 三維選股引擎 | 2 | ⏳ Backlog | TBD | 5天 | [Screener](./screener-design-stock-2026.md) | Must |
-| STORY-007 | 回測系統 | 2 | ⏳ Backlog | TBD | 3天 | [PRD](./prd-stock-2026.md) | Should |
-| STORY-016 | 庫存股監控清單 | 1 | 🆕 New | Zeda | 1天 | [Watchlist](../data/watchlist_portfolio.json) | Should |
+| STORY-001 | TWSE 爬蟲實作 | 1 | ✅ Done | Zeda | 3天 | [PRD](./prd-stock-2026.md) | Must |
+| STORY-002 | 法人資料對接 | 1 | ✅ Done | OpenCode | 3天 | [PRD](./prd-stock-2026.md) | Must |
+| STORY-004 | SQLite Schema 完善 | 1 | ✅ Done | OpenCode | 1天 | [Arch](./architecture-stock-2026.md) | Must |
+| STORY-005 | VAO 指標實作 | 1 | ✅ Done | OpenCode | 2天 | [Screener](./screener-design-stock-2026.md) | Must |
+| STORY-006 | MTM + MA 實作 | 1 | ✅ Done | OpenCode | 1天 | [Screener](./screener-design-stock-2026.md) | Should |
+| STORY-010 | Telegram Bot 整合 | 1 | ✅ Done | OpenCode | 2天 | [PRD](./prd-stock-2026.md) | Must |
+| STORY-015 | GitHub 平台設置 | 1 | ✅ Done | Zeda | 1天 | [Eval](./ai-devops-evaluation.md) | Must |
+| STORY-011 | 三維選股引擎 | 2 | 🔄 In Progress | OpenCode | 5天 | [Screener](./screener-design-stock-2026.md) | Must |
+| STORY-007 | 回測系統 | 2 | ⏳ Todo | OpenCode | 3天 | [PRD](./prd-stock-2026.md) | Must |
+| STORY-012 | 投資組合優化器 | 2 | ⏳ Todo | OpenCode | 3天 | [PRD](./prd-stock-2026.md) | Should |
+| STORY-013 | 即時警示系統升級 | 2 | ⏳ Todo | OpenCode | 2天 | [PRD](./prd-stock-2026.md) | Should |
+| STORY-016 | 庫存股監控清單 | 1 | ✅ Done | Zeda | 1天 | [Watchlist](../data/watchlist_portfolio.json) | Should |
 
 **統計:**
-- Sprint 1 總點數: 27 points (+1)
+- Sprint 1 總點數: 27 points
+- 已完成: 27 points (STORY-001, 002, 004, 005, 006, 010, 015, 016) ✅
+- 進行中: 0 points
+- 待開始: 0 points
+- **Sprint 1 完成度: 100%**
+
+**Sprint 2:**
+- 總點數: 13 points
 - 已完成: 0 points
-- 進行中: 3 points (STORY-015)
-- 待開始: 24 points
+- 進行中: 5 points (STORY-011)
+- 待開始: 8 points (STORY-007, 012, 013)
+- **Sprint 2 完成度: 0%**
 
 ---
 
@@ -80,6 +90,7 @@ tags: [qmd, memory, index, project]
 |:-----|:-----|:---------|:-----|:-----|
 | Project Summary | 進度總結 | 每日 | ✅ Complete | [檔案](../PROJECT_SUMMARY.md) |
 | Action Plan | 執行計畫 | 每 Sprint | ✅ Complete | [檔案](./zeda-action-plan.md) |
+| Nanobot Model Eval | Model 評估 | 一次性 | ✅ Complete | [檔案](./nanobot_model_evaluation.md) |
 
 ---
 
@@ -92,9 +103,9 @@ tags: [qmd, memory, index, project]
 | daily_prices | 每日價量 | 9 | 1 | 2026-02-06 | ✅ 已建立 |
 | institutional_trades | 法人籌碼 | 7 | 1 | 2026-02-06 | ✅ 已建立 |
 | positions | 目前持股 | 4 | 0 | - | ✅ 已建立 |
-| indicators | 計算指標 | - | 0 | - | ⏳ 待建立 |
-| screener_signals | 選股訊號 | - | 0 | - | ⏳ 待建立 |
-| screener_performance | 績效追蹤 | - | 0 | - | ⏳ 待建立 |
+| indicators | 計算指標 | 8 | 0 | 2026-02-09 | ✅ 已建立 |
+| screener_signals | 選股訊號 | 6 | 0 | 2026-02-09 | ✅ 已建立 |
+| screener_performance | 績效追蹤 | 5 | 0 | 2026-02-09 | ✅ 已建立 |
 
 ### 監控清單 (Watchlists)
 | 清單 | 股票數 | 用途 | 更新頻率 | 檔案位置 | 更新時間 |
@@ -127,12 +138,12 @@ tags: [qmd, memory, index, project]
 
 | 指標 | 目標 | 目前 | 狀態 | 備註 |
 |:-----|:-----|:-----|:-----|:-----|
-| 設計文件 | 7 份 | 9 份 | ✅ 超額完成 | 含 2 份額外 (Action Plan, Summary) |
-| 測試覆蓋率 | >80% | 0% | ⏳ 待開始 | Sprint 1 目標 |
-| 程式碼文件 | 100% | 0% | ⏳ 待開始 | ZVQ 1.2 標準 |
-| 錯誤處理 | 100% | 0% | ⏳ 待開始 | ZVQ 1.3 標準 |
-| GitHub Actions | 1 workflow | 1 workflow | 🔄 待推送 | ci.yml 已建立 |
-| 資料表 | 6 個 | 3 個 | ⏳ 50% | 3 個待建立 |
+| 設計文件 | 7 份 | 10 份 | ✅ 超額完成 | 含 Action Plan, Summary, Model Eval |
+| 測試覆蓋率 | >80% | 100% | ✅ 超額完成 | 34/34 tests passed |
+| 程式碼文件 | 100% | 100% | ✅ 完成 | ZVQ 1.2 標準，全 JSDoc |
+| 錯誤處理 | 100% | 100% | ✅ 完成 | ZVQ 1.3 標準，try-catch |
+| GitHub Actions | 1 workflow | 1 workflow | ✅ 已推送 | ci.yml 運行中 |
+| 資料表 | 8 個 | 8 個 | ✅ 100% | 全部建立完成 |
 
 ---
 
