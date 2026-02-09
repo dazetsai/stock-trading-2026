@@ -1,21 +1,29 @@
 /**
- * @fileoverview TWSE 即時行情爬蟲 - Yahoo Finance 版本
- * @description 抓取 20 檔庫存股的即時行情（股價、漲跌、成交量）
- * @module crawler/intraday-crawler-yahoo
- * @version 1.1.0
+ * @fileoverview TWSE 即時行情爬蟲 - 整合版本
+ * @description 使用 TWSE API 為主要來源，Yahoo Finance 作為備份
+ * @module crawler/intraday-crawler
+ * @version 2.0.0
  * @license ZVQ
+ * @author System Agent
  */
 
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+const TWSERealtimeCrawler = require('./twse-realtime-crawler');
 
 // Configuration
 const CONFIG = {
   watchlistPath: path.join(__dirname, '../../data/watchlist_portfolio.json'),
   outputDir: path.join(__dirname, '../../data/intraday'),
   updateInterval: 10 * 60 * 1000, // 10 minutes
-  csvHeaders: ['timestamp', 'code', 'name', 'price', 'change', 'change_pct', 'volume', 'open', 'high', 'low', 'prev_close']
+  csvHeaders: ['timestamp', 'code', 'name', 'price', 'change', 'change_pct', 'volume', 'open', 'high', 'low', 'prev_close'],
+  crawler: {
+    maxRetries: 3,
+    rateLimitMs: 334, // 3 requests per second
+    enableCache: true,
+    cacheTTLMs: 5000
+  }
 };
 
 /**
@@ -103,7 +111,7 @@ async function fetchWithRetry(url, timeout = 15000, retries = 3) {
 }
 
 /**
- * Fetch stock quote from Yahoo Finance
+ * Fetch stock quote from Yahoo Finance (Backup source)
  * @param {string} stockCode - Stock code (e.g., "2454")
  * @returns {Promise<Object|null>} Stock quote data or null if failed
  */
@@ -166,47 +174,32 @@ async function fetchYahooQuote(stockCode) {
 }
 
 /**
- * Fetch stock quote from TWSE MIS API (backup)
+ * Fetch stock quote from TWSE MIS API (Primary source)
+ * @param {TWSERealtimeCrawler} crawler - TWSE crawler instance
  * @param {string} stockCode - Stock code (e.g., "2454")
+ * @param {string} [marketType] - Market type ('tse' or 'otc')
  * @returns {Promise<Object|null>} Stock quote data or null if failed
  */
-async function fetchTWSEQuote(stockCode) {
+async function fetchTWSEQuote(crawler, stockCode, marketType) {
   try {
-    const url = `https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_${stockCode}.tw`;
-    const data = await fetchWithRetry(url, 10000, 2);
-    
-    if (!data.msgArray || data.msgArray.length === 0) {
-      throw new Error('No data from TWSE');
+    const quote = await crawler.fetchStock(stockCode, marketType);
+    if (quote) {
+      return {
+        code: quote.code,
+        name: quote.name,
+        price: quote.price,
+        open: quote.open,
+        high: quote.high,
+        low: quote.low,
+        prevClose: quote.prevClose,
+        volume: quote.volume,
+        change: quote.change,
+        changePct: quote.changePct,
+        timestamp: new Date().toISOString(),
+        source: 'TWSE'
+      };
     }
-    
-    const raw = data.msgArray[0];
-    
-    // Parse TWSE format
-    const price = parseFloat(raw.z || raw.price || 0);
-    const prevClose = parseFloat(raw.y || raw.prevClose || 0);
-    const open = parseFloat(raw.o || raw.open || 0);
-    const high = parseFloat(raw.h || raw.high || 0);
-    const low = parseFloat(raw.l || raw.low || 0);
-    const volume = parseInt(raw.v || raw.volume || 0, 10);
-    
-    // If current price is 0, try to use open price
-    const effectivePrice = price || open || prevClose;
-    const change = effectivePrice - prevClose;
-    
-    return {
-      code: stockCode,
-      name: raw.n || raw.name || stockCode,
-      price: effectivePrice,
-      open: open || prevClose,
-      high: high || effectivePrice,
-      low: low || effectivePrice,
-      prevClose: prevClose,
-      volume: volume,
-      change: change,
-      changePct: prevClose ? (change / prevClose) * 100 : 0,
-      timestamp: new Date().toISOString(),
-      source: 'TWSE'
-    };
+    return null;
   } catch (error) {
     console.error(`      ❌ TWSE error for ${stockCode}: ${error.message}`);
     return null;
@@ -214,52 +207,121 @@ async function fetchTWSEQuote(stockCode) {
 }
 
 /**
- * Fetch quotes for all stocks with fallback
+ * Fetch quotes for all stocks with TWSE primary + Yahoo fallback
  * @param {Array} watchlist - List of stock objects
+ * @param {TWSERealtimeCrawler} crawler - TWSE crawler instance
  * @returns {Promise<Array<Object>>} Array of stock quotes
  */
-async function fetchAllQuotes(watchlist) {
+async function fetchAllQuotes(watchlist, crawler) {
   const results = [];
   const timestamp = new Date().toISOString();
   
   console.log(`\n🚀 Starting data fetch at ${timestamp}`);
   console.log(`📊 Target: ${watchlist.length} stocks`);
+  console.log(`🔧 Source: TWSE Primary + Yahoo Backup`);
   console.log('=' .repeat(70));
   
-  for (const stock of watchlist) {
-    process.stdout.write(`⏳ ${stock.code} ${stock.name} ... `);
+  // 批次處理以提高效率
+  const batchSize = 50; // TWSE API 支援最多 100，但分批更安全
+  const totalBatches = Math.ceil(watchlist.length / batchSize);
+  
+  console.log(`📦 Processing in ${totalBatches} batches (max ${batchSize} per batch)\n`);
+  
+  for (let i = 0; i < watchlist.length; i += batchSize) {
+    const batch = watchlist.slice(i, i + batchSize);
+    const batchNum = Math.floor(i / batchSize) + 1;
     
-    // Try Yahoo first, fallback to TWSE
-    let quote = await fetchYahooQuote(stock.code);
-    let source = 'Yahoo';
+    console.log(`📦 Batch ${batchNum}/${totalBatches}: ${batch.map(s => s.code).join(', ')}`);
     
-    if (!quote || quote.price === 0) {
-      process.stdout.write('(TWSE backup) ... ');
-      quote = await fetchTWSEQuote(stock.code);
-      source = quote ? 'TWSE' : null;
-    }
-    
-    if (quote && quote.price > 0) {
-      // Merge with watchlist metadata
-      quote.category = stock.category;
-      quote.shares = stock.shares;
-      quote.priority = stock.priority;
-      quote.source = source;
-      results.push(quote);
+    try {
+      // 嘗試批次查詢 TWSE
+      const batchCodes = batch.map(s => s.code);
+      const twseQuotes = await crawler.fetchBatch(batchCodes);
       
-      const changeSymbol = quote.change >= 0 ? '📈' : '📉';
-      const changeSign = quote.change > 0 ? '+' : '';
-      console.log(`✅ ${quote.price.toFixed(2)} ${changeSymbol} ${changeSign}${quote.change.toFixed(2)} (${changeSign}${quote.changePct.toFixed(2)}%) [${source}]`);
-    } else {
-      console.log('❌ Failed');
+      // 建立成功查詢的代碼映射
+      const successfulCodes = new Set(twseQuotes.map(q => q.code));
+      
+      // 處理成功的 TWSE 結果
+      for (const quote of twseQuotes) {
+        if (quote.price > 0) {
+          const stock = batch.find(s => s.code === quote.code);
+          if (stock) {
+            results.push({
+              ...quote,
+              category: stock.category,
+              shares: stock.shares,
+              priority: stock.priority,
+              timestamp: new Date().toISOString(),
+              source: 'TWSE'
+            });
+            const changeSymbol = quote.change >= 0 ? '📈' : '📉';
+            const changeSign = quote.change > 0 ? '+' : '';
+            console.log(`   ✅ ${quote.code} ${quote.name}: ${quote.price.toFixed(2)} ${changeSymbol} ${changeSign}${quote.change.toFixed(2)} (${changeSign}${quote.changePct.toFixed(2)}%) [TWSE]`);
+          }
+        }
+      }
+      
+      // 處理 TWSE 失敗的股票（使用 Yahoo 備份）
+      const failedStocks = batch.filter(s => !successfulCodes.has(s.code));
+      
+      for (const stock of failedStocks) {
+        process.stdout.write(`   ⏳ ${stock.code} ${stock.name} (Yahoo backup) ... `);
+        
+        const yahooQuote = await fetchYahooQuote(stock.code);
+        
+        if (yahooQuote && yahooQuote.price > 0) {
+          results.push({
+            ...yahooQuote,
+            category: stock.category,
+            shares: stock.shares,
+            priority: stock.priority,
+            source: 'Yahoo'
+          });
+          const changeSymbol = yahooQuote.change >= 0 ? '📈' : '📉';
+          const changeSign = yahooQuote.change > 0 ? '+' : '';
+          console.log(`✅ ${yahooQuote.price.toFixed(2)} ${changeSymbol} ${changeSign}${yahooQuote.change.toFixed(2)} (${changeSign}${yahooQuote.changePct.toFixed(2)}%) [Yahoo]`);
+        } else {
+          console.log('❌ Failed');
+        }
+      }
+      
+    } catch (error) {
+      console.error(`   ❌ Batch ${batchNum} failed: ${error.message}`);
+      
+      // 批次失敗時，逐一嘗試 Yahoo
+      for (const stock of batch) {
+        process.stdout.write(`   ⏳ ${stock.code} ${stock.name} (Yahoo fallback) ... `);
+        
+        const yahooQuote = await fetchYahooQuote(stock.code);
+        
+        if (yahooQuote && yahooQuote.price > 0) {
+          results.push({
+            ...yahooQuote,
+            category: stock.category,
+            shares: stock.shares,
+            priority: stock.priority,
+            source: 'Yahoo'
+          });
+          console.log(`✅ ${yahooQuote.price.toFixed(2)} [Yahoo]`);
+        } else {
+          console.log('❌ Failed');
+        }
+      }
     }
     
-    // Delay to avoid rate limiting
-    await new Promise(r => setTimeout(r, 800));
+    console.log(''); // 批次間隔行
   }
   
   console.log('=' .repeat(70));
-  console.log(`✅ Successfully fetched ${results.length}/${watchlist.length} stocks\n`);
+  
+  // 統計來源
+  const twseCount = results.filter(r => r.source === 'TWSE').length;
+  const yahooCount = results.filter(r => r.source === 'Yahoo').length;
+  const successRate = ((results.length / watchlist.length) * 100).toFixed(1);
+  
+  console.log(`✅ Successfully fetched ${results.length}/${watchlist.length} stocks (${successRate}%)`);
+  console.log(`   📊 Source breakdown: TWSE=${twseCount}, Yahoo=${yahooCount}`);
+  console.log('');
   
   return results;
 }
@@ -292,6 +354,7 @@ function displayResults(quotes) {
     const changeStr = q.change > 0 ? `+${q.change.toFixed(2)}` : q.change.toFixed(2);
     const changePctStr = q.changePct > 0 ? `+${q.changePct.toFixed(2)}%` : `${q.changePct.toFixed(2)}%`;
     const priorityEmoji = { urgent: '🔴', high: '🟠', medium: '🟡', low: '🟢' }[q.priority] || '⚪';
+    const sourceEmoji = q.source === 'TWSE' ? '🇹🇼' : '🌐';
     
     return {
       '優先': priorityEmoji,
@@ -303,7 +366,7 @@ function displayResults(quotes) {
       '成交量': formatNumber(q.volume),
       '持有': q.shares,
       '類別': q.category.substring(0, 8),
-      '來源': q.source
+      '來源': sourceEmoji
     };
   });
   
@@ -372,13 +435,23 @@ function saveToJson(quotes) {
   const dateStr = date.toISOString().split('T')[0];
   const timeStr = date.toTimeString().split(' ')[0].replace(/:/g, '-');
   
+  // Source breakdown
+  const twseCount = quotes.filter(r => r.source === 'TWSE').length;
+  const yahooCount = quotes.filter(r => r.source === 'Yahoo').length;
+  
   const data = {
     metadata: {
       generatedAt: date.toISOString(),
       generatedAtLocal: date.toLocaleString('zh-TW', { hour12: false }),
       count: quotes.length,
-      source: 'TWSE Intraday Crawler v1.1.0',
-      crawler: 'intraday-crawler.js'
+      source: 'TWSE Intraday Crawler v2.0.0',
+      crawler: 'intraday-crawler.js',
+      engine: {
+        primary: 'TWSE API (twse-realtime-crawler)',
+        backup: 'Yahoo Finance',
+        twseCount,
+        yahooCount
+      }
     },
     quotes: quotes
   };
@@ -404,8 +477,9 @@ async function runCrawler() {
   
   try {
     console.log('\n' + '='.repeat(70));
-    console.log('  📊 TWSE INTRADAY CRAWLER v1.1.0 (Yahoo Finance + TWSE Backup)');
+    console.log('  📊 TWSE INTRADAY CRAWLER v2.0.0 (TWSE Primary + Yahoo Backup)');
     console.log('  📋 ZVQ Standard Compliant | JSDoc | Error Handling');
+    console.log('  🔧 Powered by twse-realtime-crawler.js');
     console.log('='.repeat(70));
     
     // Setup
@@ -415,8 +489,21 @@ async function runCrawler() {
     console.log(`\n📋 Watchlist loaded: ${watchlist.length} stocks`);
     console.log(`📁 Output directory: ${CONFIG.outputDir}`);
     
+    // Initialize TWSE crawler
+    const twseCrawler = new TWSERealtimeCrawler({
+      maxRetries: CONFIG.crawler.maxRetries,
+      rateLimitMs: CONFIG.crawler.rateLimitMs,
+      enableCache: CONFIG.crawler.enableCache,
+      cacheTTLMs: CONFIG.crawler.cacheTTLMs
+    });
+    
+    console.log(`\n🔧 Crawler config:`);
+    console.log(`   Max retries: ${CONFIG.crawler.maxRetries}`);
+    console.log(`   Rate limit: ${CONFIG.crawler.rateLimitMs}ms (${(1000/CONFIG.crawler.rateLimitMs).toFixed(1)} req/sec)`);
+    console.log(`   Cache enabled: ${CONFIG.crawler.enableCache}`);
+    
     // Fetch data
-    const quotes = await fetchAllQuotes(watchlist);
+    const quotes = await fetchAllQuotes(watchlist, twseCrawler);
     
     if (quotes.length === 0) {
       throw new Error('No quotes fetched - check data sources');
@@ -429,11 +516,12 @@ async function runCrawler() {
     const jsonPath = saveToJson(quotes);
     
     const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+    const successRate = ((quotes.length / watchlist.length) * 100).toFixed(1);
     
     console.log('='.repeat(70));
     console.log('✅ CRAWLER COMPLETED SUCCESSFULLY');
     console.log(`   ⏱️  Duration: ${duration}s`);
-    console.log(`   📊 Stocks: ${quotes.length}/${watchlist.length}`);
+    console.log(`   📊 Stocks: ${quotes.length}/${watchlist.length} (${successRate}%)`);
     console.log(`   📁 CSV: ${csvPath}`);
     console.log(`   📁 JSON: ${jsonPath}`);
     console.log('='.repeat(70) + '\n');
@@ -442,6 +530,7 @@ async function runCrawler() {
       success: true,
       count: quotes.length,
       total: watchlist.length,
+      successRate: parseFloat(successRate),
       duration: parseFloat(duration),
       csvPath,
       jsonPath,
@@ -489,27 +578,53 @@ if (require.main === module) {
     startMonitoring();
   } else if (args.includes('--help') || args.includes('-h')) {
     console.log(`
-TWSE Intraday Crawler - 台股即時行情爬蟲
+TWSE Intraday Crawler v2.0.0 - 台股即時行情爬蟲
 
 Usage: node intraday-crawler.js [options]
 
 Options:
   --monitor, -m    Start continuous monitoring (10min intervals)
   --once, -o       Run once and exit (default)
+  --test, -t       Run test mode (fetch 6 problematic stocks)
   --help, -h       Show this help
 
 Features:
-  ✅ Yahoo Finance primary + TWSE backup
+  ✅ TWSE API primary source (twse-realtime-crawler.js)
+  ✅ Yahoo Finance backup
+  ✅ Batch processing for efficiency
   ✅ 20 stocks from watchlist_portfolio.json
   ✅ CSV + JSON output
   ✅ Priority-based sorting (urgent/high/medium/low)
   ✅ Error handling with retry logic
   ✅ ZVQ standard compliant
 
-Files:
+Archives:
   Input:  ${CONFIG.watchlistPath}
   Output: ${CONFIG.outputDir}
+
+Updated: 2026-02-09
     `);
+  } else if (args.includes('--test') || args.includes('-t')) {
+    // 測試模式：測試6檔Yahoo抓不到的股票
+    console.log('\n🧪 TEST MODE: Testing 6 problematic stocks');
+    console.log('These stocks cannot be fetched from Yahoo Finance:\n');
+    
+    const crawler = new TWSERealtimeCrawler();
+    const testStocks = ['5340', '5347', '5425', '6127', '6182', '1815'];
+    
+    crawler.fetchBatch(testStocks).then(quotes => {
+      console.log(`\n✅ Successfully fetched ${quotes.length}/${testStocks.length} stocks\n`);
+      
+      quotes.forEach(q => {
+        const changeSign = q.change >= 0 ? '+' : '';
+        console.log(`   ${q.code} ${q.name}: ${q.price.toFixed(2)} (${changeSign}${q.changePct.toFixed(2)}%)`);
+      });
+      
+      process.exit(quotes.length === testStocks.length ? 0 : 1);
+    }).catch(error => {
+      console.error('❌ Test failed:', error.message);
+      process.exit(1);
+    });
   } else {
     // Default: run once
     runCrawler().then(result => {
@@ -525,5 +640,6 @@ module.exports = {
   loadWatchlist,
   fetchYahooQuote,
   fetchTWSEQuote,
+  fetchAllQuotes,
   CONFIG
 };
