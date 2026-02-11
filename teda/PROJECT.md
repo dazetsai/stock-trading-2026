@@ -226,103 +226,172 @@ Examples to consider:
 - "Docker container that runs anywhere"?
 - Something else?
 
-## Consensus Reached: Hybrid Solution (2026-02-11 15:54)
+## Consensus Reached: Hybrid Solution with Meta-Learning (2026-02-11 18:42)
 
 ### ✅ Final Decision
 
-**Architecture: Hybrid Approach - Best of All Three Candidates**
+**Architecture: Hybrid Approach with Auto-Skill Meta-Learning Integration**
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Teda Bot Architecture                    │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │         nanobot (Execution Framework)                │   │
-│  │  • Scheduled tasks (06:00 data collection)           │   │
-│  │  • Background 24/7 operation                         │   │
-│  │  • Lightweight ~4,000 lines core                   │   │
-│  └──────────────────────────────────────────────────────┘   │
-│                              │                              │
-│           ┌──────────────────┼──────────────────┐         │
-│           │                  │                  │         │
-│  ┌────────▼────────┐  ┌──────▼──────┐  ┌────────▼────────┐ │
-│  │   Qbot Modules  │  │  Ollama     │  │  MCP/ACP Layer  │ │
-│  │  (Data + AI)    │  │  Local LLM  │  │  (Zeda Coord)   │ │
-│  │  • Data fetch   │  │  • Qwen 8B  │  │  • Status query │ │
-│  │  • Backtesting  │  │  • Local    │  │  • Command      │ │
-│  │  • AI monitoring│  │    inference│  │  • Alerts       │ │
-│  └─────────────────┘  └─────────────┘  └─────────────────┘ │
-│                                                             │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │   OpenClaw Mini Concepts (Architecture Reference)  │   │
-│  │  • Context loading patterns                          │   │
-│  │  • Skills management design                        │   │
-│  │  • Heartbeat/wake-up mechanisms                    │   │
-│  └──────────────────────────────────────────────────────┘   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### 🎯 Component Responsibilities
-
-| Component | Source | Role in Teda | Key Contribution |
-|-----------|--------|--------------|------------------|
-| **nanobot** | lightweight-openclaw/nanobot | Execution engine | Scheduled tasks, background operation, lightweight core |
-| **Qbot modules** | UFund-Me/Qbot | Intelligence layer | Data fetching, backtesting, AI-powered monitoring |
-| **Ollama** | ollama/ollama | Local LLM | Qwen 3-VL 8B inference, zero cloud tokens |
-| **MCP/ACP** | Custom/Protocol | Communication | Agent-to-agent coordination with Zeda |
-| **OpenClaw Mini** | voocel/openclaw-mini | Architecture reference | Context loading, skills design, heartbeat patterns |
-
-### 📋 Why This Hybrid?
-
-**nanobot alone:**
-- ✅ Has execution (scheduling + background)
-- ❌ Lacks professional stock monitoring capabilities
-- ❌ Lacks AI-powered anomaly detection
-
-**Qbot alone:**
-- ✅ Has professional quant features
-- ❌ Too heavy as full platform
-- ❌ Not designed for agent coordination
-
-**Combined (Hybrid):**
-- ✅ nanobot provides reliable execution foundation
-- ✅ Qbot modules add professional stock intelligence
-- ✅ Both are modular and extractable
-- ✅ Maintains lightweight footprint
-
-### 🚀 Next Phase: Detailed Design
-
-**Phase 1: nanobot Integration (Week 1)**
-- [ ] Clone and examine nanobot codebase
-- [ ] Verify Ollama integration feasibility
-- [ ] Test scheduled task execution
-- [ ] Design log structure for Teda
-
-**Phase 2: Qbot Module Extraction (Week 2)**
-- [ ] Identify Qbot data fetching modules
-- [ ] Extract backtesting components
-- [ ] Study AI monitoring implementations
-- [ ] Design integration points with nanobot
-
-**Phase 3: Communication Layer (Week 3)**
-- [ ] Implement MCP/ACP protocol
-- [ ] Design Zeda-Teda communication
-- [ ] Telegram integration for alerts
-- [ ] Test end-to-end coordination
-
-**Phase 4: Professional Role Definition (Week 4)**
-- [ ] Define Teda's agents.md (Stock Monitoring Assistant)
-- [ ] Define skill boundaries
-- [ ] Design escalation rules to Zeda
-- [ ] Training methodology
+**Evolution from Original Plan:**
+- **Base:** nanobot execution + Qbot intelligence + Ollama local + MCP coordination
+- **Enhancement:** Auto-Skill meta-learning patterns for self-improvement
+- **Result:** Self-evolving executor agent that optimizes execution without constant Zeda intervention
 
 ---
 
-**Status:** ✅ PLANNING COMPLETE → DESIGN PHASE
-**Consensus:** Hybrid architecture using nanobot + Qbot modules
-**Next Action:** Begin detailed technical design
+### 🧠 New Component: Meta-Skill Layer (From Auto-Skill Research)
+
+**Teda's Self-Learning Capabilities:**
+
+```
+Teda Agent (Enhanced with Meta-Learning)
+├── Core Execution (nanobot base)
+│   ├── Scheduled tasks
+│   ├── Background operation
+│   └── Local LLM (Ollama)
+│
+├── Intelligence Layer (Qbot modules)
+│   ├── Data fetching
+│   ├── Technical indicators
+│   └── AI monitoring
+│
+├── NEW: Meta-Skill System (Auto-Skill inspired)
+│   ├── Experience Library
+│   │   ├── stock_data_collection/success_parameters/
+│   │   ├── stock_data_collection/pitfall_records/
+│   │   └── stock_data_collection/error_solutions/
+│   ├── Post-Task Auto-Analysis
+│   │   └── After 06:00: analyze duration, errors, anomalies
+│   ├── Cross-Context Learning
+│   │   └── Apply learnings from stock A to similar stock B
+│   └── Proactive Experience Capture
+│       └── "Record this pattern for future reference?"
+│
+└── Communication Layer (MCP + Telegram)
+    ├── Zeda coordination
+    └── Human-readable alerts
+```
+
+---
+
+### 📚 Knowledge Storage Structure (From Auto-Skill)
+
+**Experience Library Format:**
+```
+teda/experiences/
+├── stock_monitoring/
+│   ├── 2026-02-11_060000_fetch_tsmc.md
+│   │   "Duration: 45s (vs avg 60s). Source A faster than B."
+│   ├── 2026-02-10_error_timeout.md
+│   │   "Yahoo API timeout at 06:05. Switched to backup source."
+│   └── index.json
+│       {
+│         "topic": "stock_monitoring",
+│         "patterns": [
+│           {"fingerprint": ["yahoo", "timeout", "06:00"], 
+│            "solution": "use_backup_source"}
+│         ]
+│       }
+├── alert_generation/
+│   └── threshold_optimization.md
+└── index.json (master index for all skills)
+```
+
+---
+
+### 🔄 Self-Improvement Loop (The Loop)
+
+**After Each 06:00 Data Collection:**
+
+1. **Execute Task** → Collect stock data
+2. **Auto-Analyze** → Check: duration? errors? anomalies?
+3. **Pattern Detect** → Is this similar to past experiences?
+4. **Experience Retrieve** → Load relevant past learnings
+5. **Self-Optimize** → Adjust: timing? source order? parameters?
+6. **Propose Record** → "Should I record this for next time?"
+   - If clear pattern: Auto-record
+   - If uncertain: Ask Zeda/Daze on next communication
+7. **Apply Learning** → Use optimized approach next cycle
+
+---
+
+### 🎯 Revised Component Responsibilities
+
+| Component | Source | Role | Key Contribution |
+|-----------|--------|------|------------------|
+| **nanobot** | lightweight-openclaw/nanobot | Execution engine | Reliable scheduling & background operation |
+| **Qbot modules** | UFund-Me/Qbot | Intelligence layer | Professional quant capabilities |
+| **Auto-Skill concepts** | Toolsai/auto-skill | Meta-learning layer | Self-improvement without constant training |
+| **Ollama** | ollama/ollama | Local LLM | Zero cloud token inference |
+| **MCP/ACP** | Custom/Protocol | Communication | Agent coordination |
+
+---
+
+### 💡 Why This Enhanced Hybrid?
+
+**Original Hybrid:**
+- ✅ Reliable execution
+- ✅ Professional capabilities
+- ❌ Still requires Zeda to train/improve Teda manually
+
+**Enhanced with Auto-Skill:**
+- ✅ Teda self-optimizes execution details
+- ✅ Teda learns from its own experiences
+- ✅ Zeda only intervenes for strategic decisions (role changes, new capabilities)
+- ✅ Reduced coordination overhead
+
+---
+
+### 🚀 Revised Implementation Timeline
+
+**Phase 1: Core Execution (Week 1-2)**
+- [ ] nanobot integration with Ollama
+- [ ] Basic scheduled task (06:00)
+- [ ] Log structure design
+
+**Phase 2: Intelligence Layer (Week 3-4)**
+- [ ] Qbot data fetching modules
+- [ ] Technical indicator calculation
+- [ ] Alert generation
+
+**Phase 3: Meta-Learning System (Week 5-6)** ⭐ NEW
+- [ ] Experience library structure (JSON + Markdown)
+- [ ] Post-task auto-analysis engine
+- [ ] Pattern matching for experience retrieval
+- [ ] Self-optimization decision logic
+
+**Phase 4: Communication & Training (Week 7-8)**
+- [ ] MCP/ACP protocol implementation
+- [ ] Zeda-Teda coordination
+- [ ] Role definition (what Teda can vs cannot self-learn)
+- [ ] Escalation rules
+
+**Phase 5: Testing & Refinement (Week 9-10)**
+- [ ] 06:00 operation testing
+- [ ] Self-learning validation
+- [ ] Performance metrics
+
+---
+
+### ⚖️ Zeda vs Teda Learning Boundaries
+
+**Teda Self-Learns (Auto-Skill):**
+- ✅ Optimal data fetch timing (empirical)
+- ✅ API timeout patterns & recovery
+- ✅ Alert threshold tuning
+- ✅ Data source reliability ranking
+- ✅ Cross-stock pattern transfer
+
+**Zeda Defines/Trains (Manual):**
+- ✗ What Teda's role is (monitoring vs trading)
+- ✗ When to escalate to Zeda (escalation rules)
+- ✗ New capabilities (add new monitoring types)
+- ✗ Strategic decisions (which stocks to monitor)
+
+---
+
+**Status:** ✅ PLANNING COMPLETE → ENHANCED HYBRID ARCHITECTURE CONFIRMED
+**Next Phase:** Detailed Design with Meta-Learning System
 
 ---
 
